@@ -25,8 +25,10 @@ const createUser = async (userCreateDto: UserCreateDTO) => {
   return user;
 };
 //* 유저 전체 조회
-const getAllUser = async () => {
+const getAllUser = async (page:number, limit: number) => {
   const users = await prisma.user.findMany({
+    skip: (page - 1) *limit,
+    take: limit,
     orderBy: {
       id: 'asc',
     },
@@ -112,6 +114,45 @@ const signIn = async (userSignInDto: UserSignInDTO) => {
   }
 };
 
+//* 유저 이름 검색
+
+const searchUserByName = async(keyword: string, option: string) => {
+  try{
+    if(option === 'asc') {
+      const user = await prisma.user.findMany({
+        where: {
+          name: {
+            contains: keyword
+          }
+        },
+        orderBy: {
+          createdAt: "asc",
+        }
+      });
+      return user;
+    }
+    if(option === 'desc') {
+      const user = await prisma.user.findMany({
+        where: {
+          name: {
+            contains: keyword
+          }
+        },
+        orderBy: {
+          createdAt: "desc",
+        }
+      });
+      return user;
+    }
+
+
+    
+  }catch(error){
+    console.log(error);
+    throw error;
+  }
+}
+
 const userService = {
   getUserById,
   createUser,
@@ -119,6 +160,7 @@ const userService = {
   updateUser,
   deleteUser,
   signIn,
+  searchUserByName
 };
 
 export default userService;

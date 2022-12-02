@@ -5,10 +5,14 @@ import { body } from 'express-validator';
 
 const router: Router = Router();
 
+//* 이름으로 유저 검색 - GET api/user/search?keyword={}
+router.get("/search", userController.searchUserByName);
+
+
 router.get('/:userId', auth, userController.getUserById);
 
 // 전체 유저 조회 GET api/user
-router.get('/', auth, userController.getAllUser);
+router.get('/', userController.getAllUser);
 
 // 유저 생성  POST api/user
 router.post(
